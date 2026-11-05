@@ -1,0 +1,2 @@
+# Nordic-signal-
+Stock analyser
