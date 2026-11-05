@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nordic Signal — Aktieanalys</title>
+<style>
+:root{--bg:#0b1020;--panel:#121a2c;--panel2:#172238;--line:#25324a;--text:#eef3ff;--muted:#93a3bd;--green:#35d39a;--red:#ff6b7a;--amber:#f3bd5b;--blue:#79a9ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 20% -20%,#1b3154 0,transparent 42%),var(--bg);color:var(--text);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+.wrap{max-width:1400px;margin:auto;padding:26px}.top{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:24px}.brand{display:flex;align-items:center;gap:12px}.logo{width:40px;height:40px;border-radius:13px;background:linear-gradient(135deg,#5d9cff,#31d5a0);display:grid;place-items:center;color:#071323;font-weight:900;font-size:20px}.brand h1{font-size:19px;margin:0;letter-spacing:.2px}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.status{border:1px solid var(--line);border-radius:999px;padding:7px 11px;color:var(--muted);font-size:12px}
+.grid{display:grid;grid-template-columns:320px minmax(0,1fr);gap:18px}.panel{background:linear-gradient(180deg,rgba(22,33,54,.96),rgba(16,25,42,.96));border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 14px 45px #0002}.panel h2{font-size:14px;margin:0 0 15px}.field{margin:12px 0}.field label{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}input,select,button{font:inherit}input,select{width:100%;background:#0d1627;border:1px solid #2a3a56;color:var(--text);border-radius:10px;padding:11px 12px;outline:none}input:focus,select:focus{border-color:var(--blue)}button{border:0;border-radius:10px;padding:11px 14px;background:linear-gradient(110deg,#6ca4ff,#48d6ac);color:#071323;font-weight:750;cursor:pointer}button:disabled{opacity:.55;cursor:wait}.secondary{background:#1c2a42;color:var(--text);border:1px solid #30415f}.row{display:flex;gap:9px;align-items:center}.row>*{flex:1}.hint{font-size:11px;color:var(--muted);margin-top:6px}.small{font-size:12px;color:var(--muted)}.main{display:grid;gap:18px}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric{background:#0d1729;border:1px solid var(--line);border-radius:13px;padding:14px}.metric .label{font-size:11px;color:var(--muted)}.metric .value{font-size:22px;font-weight:750;margin-top:5px;letter-spacing:-.5px}.metric .sub{font-size:11px;color:var(--muted);margin-top:2px}.green{color:var(--green)!important}.red{color:var(--red)!important}.amber{color:var(--amber)!important}
+.chart-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}.chart-head h2{margin:0}.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:11px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}.chart{width:100%;height:260px;display:block;overflow:visible}.macdchart{height:190px}.chart text{fill:#8091ac;font-size:10px}.chart .gridline{stroke:#263650;stroke-dasharray:3 5}.chart .axis{stroke:#40516b}.chart .zero{stroke:#73839a;stroke-dasharray:4 4}.signalbox{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px;border-radius:13px;background:#0d1729;border:1px solid var(--line)}.signal{font-weight:800;font-size:17px}.pill{font-size:11px;padding:5px 9px;border-radius:999px;background:#193a34;color:var(--green);border:1px solid #245849}.pill.down{background:#3a202a;color:var(--red);border-color:#63313d}.pill.neutral{background:#3a3120;color:var(--amber);border-color:#66542d}.analysis{color:#c5d1e4;margin:12px 0 0}.disclaimer{font-size:11px;color:#8292aa;border-top:1px solid var(--line);padding-top:12px;margin-top:14px}.table{width:100%;border-collapse:collapse;font-size:12px}.table td{padding:9px 4px;border-bottom:1px solid #263650}.table td:last-child{text-align:right;font-variant-numeric:tabular-nums}.error{color:#ff9aa5;font-size:12px;white-space:pre-wrap;margin-top:9px}.api-note{background:#202c42;border:1px solid #344968;border-radius:10px;padding:10px;font-size:11px;color:#b5c4da;margin-top:14px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.wrap{padding:14px}.top{align-items:flex-start}.metrics{grid-template-columns:repeat(2,1fr)}.metric .value{font-size:19px}.chart{height:220px}}
+
+.screen-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.screen-controls{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:12px 0}
+.screen-controls button{min-width:190px}
+.progress{height:6px;background:#25334b;border-radius:99px;overflow:hidden;margin:10px 0}
+.progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,#6ca4ff,#48d6ac);transition:width .2s}
+.results{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+.results th{text-align:left;color:#8fa2bf;font-weight:600;padding:10px 7px;border-bottom:1px solid #30415d;white-space:nowrap}
+.results td{padding:10px 7px;border-bottom:1px solid #25334a;white-space:nowrap}
+.results tr:hover{background:#ffffff08}
+.results .ticker{font-weight:750;color:#eaf1ff}.tag{display:inline-block;padding:4px 7px;border-radius:7px;font-size:10px;font-weight:750}
+.tag.buy{background:#173c34;color:#50dfad}.tag.watch{background:#3a3220;color:#f4c66d}.tag.wait{background:#302a37;color:#b9a8d7}
+.table-wrap{overflow-x:auto}.screen-note{font-size:11px;color:#8fa0ba;line-height:1.55;margin-top:12px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}
+.stats .metric{padding:10px}.stats .value{font-size:19px}
+@media(max-width:600px){.stats{grid-template-columns:repeat(3,1fr)}.screen-controls button{width:100%}}
+
+
+.risk-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.risk-card{background:#0d1729;border:1px solid var(--line);border-radius:12px;padding:12px}
+.risk-card .label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.risk-card .value{font-size:18px;font-weight:750;margin-top:5px}
+.backtest-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:12px 0}
+.backtest-stats .metric{padding:10px}.backtest-stats .value{font-size:18px}
+@media(max-width:900px){.risk-grid{grid-template-columns:repeat(2,1fr)}.backtest-stats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:520px){.backtest-stats{grid-template-columns:repeat(2,1fr)}}
+
+</style></head>
+<body><div class="wrap">
+<header class="top"><div class="brand"><div class="logo">N</div><div><h1>Nordic Signal</h1><p>Teknisk aktieanalys · MACD + RSI + EMA</p></div></div><div class="status" id="dataStatus">Demoläge · exempeldata</div></header>
+<div class="grid">
+<aside class="panel">
+<h2>Analysinställningar</h2>
+<div class="field"><label for="symbol">Aktiesymbol</label><input id="symbol" value="AAPL" placeholder="Ex. AAPL eller MSFT"></div>
+<div class="row"><div class="field"><label for="market">Marknad</label><select id="market"><option value="SE">Sverige</option><option value="US">USA</option></select></div><div class="field"><label for="interval">Intervall</label><select id="interval"><option value="1day">Daglig</option><option value="1week">Veckovis</option><option value="1month">Månadsvis</option></select></div></div>
+
+<div class="row"><button id="analyze">Analysera aktie</button><button class="secondary" id="demo">Visa demo</button></div>
+<div class="hint">API-anslutningen hanteras säkert via webbplatsens server. Din API-nyckel visas inte i webbläsaren.</div>
+<div class="api-note"><b>Datakälla:</b> Twelve Data. Skapa en API-nyckel på <a href="https://twelvedata.com/" target="_blank" rel="noreferrer" style="color:#8db6ff">twelvedata.com</a>. API-kvoter och tillgång till Stockholmsbörsen beror på ditt abonnemang.</div>
+<div id="error" class="error"></div>
+<hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+<h2>Indikatorer</h2>
+<table class="table"><tr><td>MACD</td><td>12 / 26</td></tr><tr><td>Signal</td><td>9 perioder</td></tr><tr><td>RSI</td><td>14 perioder</td></tr><tr><td>EMA</td><td>20 / 50</td></tr></table>
+<p class="hint">Standardinställningar. Signaler baseras på stängningskurser.</p>
+</aside>
+<main class="main">
+<section class="panel">
+<div class="chart-head"><div><div class="small" id="company">VOLVO AB · DEMO</div><h2 style="font-size:22px;margin:3px 0" id="heading">VOLV-B.ST</h2></div><div style="text-align:right"><div class="small">Senaste stängning</div><div style="font-size:21px;font-weight:800" id="lastPrice">—</div><div class="small" id="priceChange">—</div></div></div>
+<div class="metrics">
+<div class="metric"><div class="label">MACD</div><div class="value" id="macdValue">—</div><div class="sub" id="macdSub">MACD-linje</div></div>
+<div class="metric"><div class="label">RSI (14)</div><div class="value" id="rsiValue">—</div><div class="sub" id="rsiSub">Momentum</div></div>
+<div class="metric"><div class="label">EMA 20</div><div class="value" id="ema20Value">—</div><div class="sub">Kort trend</div></div>
+<div class="metric"><div class="label">EMA 50</div><div class="value" id="ema50Value">—</div><div class="sub">Lång trend</div></div>
+</div>
+</section>
+<section class="panel"><div class="chart-head"><h2>Pris och glidande medelvärden</h2><div class="legend"><span><i class="dot" style="background:#79a9ff"></i>Stängning</span><span><i class="dot" style="background:#f3bd5b"></i>EMA 20</span><span><i class="dot" style="background:#35d39a"></i>EMA 50</span></div></div><svg id="priceChart" class="chart" viewBox="0 0 900 260" preserveAspectRatio="none"></svg></section>
+<section class="panel"><div class="chart-head"><h2>MACD-indikator</h2><div class="legend"><span><i class="dot" style="background:#79a9ff"></i>MACD</span><span><i class="dot" style="background:#f3bd5b"></i>Signal</span><span><i class="dot" style="background:#35d39a"></i>Histogram</span></div></div><svg id="macdChart" class="chart macdchart" viewBox="0 0 900 190" preserveAspectRatio="none"></svg></section>
+<section class="panel"><h2>Samlad teknisk bedömning</h2><div class="signalbox"><div><div class="small">Indikatorsammanvägning</div><div class="signal" id="signalText">—</div></div><span class="pill neutral" id="signalPill">Inväntar data</span></div><p class="analysis" id="analysisText">Kör en analys för att se MACD-korsning, momentum och trendfilter.</p><div class="disclaimer">Detta verktyg visar tekniska indikatorer och regelbaserade tolkningar, inte personlig investeringsrådgivning. MACD är eftersläpande och falska signaler förekommer. Kontrollera alltid bolagets fundamenta, risk och din egen strategi innan beslut.</div></section>
+
+<section class="panel" id="screenerPanel">
+ <div class="screen-head"><div><h2 style="margin:0">100-bolags screener</h2><div class="small">Stora, etablerade bolag i Sverige och USA</div></div><span class="pill neutral" id="scanState">Redo</span></div>
+ <div class="screen-controls"><button id="scanBtn">Analysera 100 bolag</button><button class="secondary" id="demoScanBtn">Visa demoresultat</button></div>
+ <div class="small" id="scanProgressText">Screeningen använder MACD, RSI och EMA 20/50 för att hitta aktier att bevaka.</div>
+ <div class="progress"><span id="scanProgress"></span></div>
+ <div class="stats">
+  <div class="metric"><div class="label">KÖP-KANDIDATER</div><div class="value green" id="buyCount">—</div></div>
+  <div class="metric"><div class="label">BEVAKA</div><div class="value amber" id="watchCount">—</div></div>
+  <div class="metric"><div class="label">ANALYSERADE</div><div class="value" id="scannedCount">0 / 100</div></div>
+ </div>
+ <div class="field" style="max-width:240px;margin-top:16px"><label for="resultFilter">Visa resultat</label><select id="resultFilter"><option value="all">Alla analyserade</option><option value="buy">Köp-kandidater</option><option value="watch">Håll koll på</option><option value="wait">Avvakta</option></select></div>
+ <div class="table-wrap"><table class="results"><thead><tr><th>Bolag</th><th>Marknad</th><th>Senaste</th><th>MACD</th><th>RSI</th><th>Vol. 60d</th><th>Trend</th><th>Bedömning</th><th>Poäng</th></tr></thead><tbody id="scanResults"><tr><td colspan="8" class="small">Kör screeningen eller visa demoresultat för att fylla listan.</td></tr></tbody></table></div>
+ <p class="screen-note"><b>Urval:</b> En förvald bevakningslista med stora, etablerade bolag och tyngdpunkt på dagligvaror, hälsovård, samhällsservice, telekom och mogna industribolag. Screeningen väger även in 60-perioders historisk volatilitet och ger lägre poäng åt mycket volatila aktier. Historisk volatilitet är dock inte samma sak som nyhetskänslighet. Det betyder inte att aktierna är okänsliga för nyheter – alla aktier kan påverkas kraftigt av rapporter, regleringar, räntor, geopolitik och bolagsspecifika händelser. <b>”Köp-kandidat” är en teknisk signal att undersöka vidare, inte en personlig köprekommendation.</b></p>
+</section>
+
+
+<section class="panel">
+ <div class="screen-head"><div><h2 style="margin:0">Riskplan för vald aktie</h2><div class="small">ATR-baserad stop-loss och positionsstorlek</div></div><span class="pill neutral">Riskstyrning</span></div>
+ <div class="row" style="max-width:470px"><div class="field"><label for="capital">Portföljstorlek</label><input id="capital" type="number" min="1000" step="1000" value="100000"></div><div class="field"><label for="capitalCurrency">Valuta</label><select id="capitalCurrency"><option value="SEK">SEK</option><option value="USD">USD</option></select></div></div>
+ <div class="risk-grid">
+  <div class="risk-card"><div class="label">ATR (14)</div><div class="value" id="atrValue">—</div></div>
+  <div class="risk-card"><div class="label">Illustrativ stop-loss</div><div class="value red" id="stopValue">—</div></div>
+  <div class="risk-card"><div class="label">Mål vid 2R</div><div class="value green" id="targetValue">—</div></div>
+  <div class="risk-card"><div class="label">Max antal aktier</div><div class="value" id="sharesValue">—</div></div>
+ </div>
+ <p class="screen-note" id="riskExplain">Välj samma valuta som aktien handlas i. Standardrisk är 1 % av angivet portföljvärde per affär.</p>
+</section>
+<section class="panel">
+ <div class="screen-head"><div><h2 style="margin:0">Historisk backtest</h2><div class="small">Testa MACD + trendfilter på vald aktie</div></div><span class="pill neutral">Strategitest</span></div>
+ <div class="screen-controls"><button id="backtestBtn">Kör backtest 5 år</button><span class="small">Dagliga data · max 1 position åt gången</span></div>
+ <div class="backtest-stats">
+  <div class="metric"><div class="label">Strategiavkastning</div><div class="value" id="btReturn">—</div></div>
+  <div class="metric"><div class="label">Köp & behåll</div><div class="value" id="btHold">—</div></div>
+  <div class="metric"><div class="label">Max drawdown</div><div class="value" id="btDrawdown">—</div></div>
+  <div class="metric"><div class="label">Träffsäkerhet</div><div class="value" id="btWin">—</div></div>
+  <div class="metric"><div class="label">Antal affärer</div><div class="value" id="btTrades">—</div></div>
+ </div>
+ <div id="btDetails" class="small">Backtest kräver riktig historisk kursdata. Ange API-nyckel och välj en aktie ovan.</div>
+ <p class="screen-note">Backtest är en förenklad historisk simulering, inte en prognos. Modellen använder 0,1 % antagen kostnad per köp/sälj, stop-loss på 2 × ATR och vinstmål på 2R. Signaler beräknas på stängningskurs och affärer utförs tidigast nästa dags öppning. Resultatet påverkas av urvalsbias, bolagsöverlevnad, utdelningar, spread, skatt, glidning och datakvalitet; det kan inte garantera framtida resultat.</p>
+</section>
+
+</main></div></div>
+<script>
+const $=id=>document.getElementById(id);
+let rows=[];
+function ema(values,period){const k=2/(period+1),out=[];let prev=values[0];values.forEach((v,i)=>{prev=i===0?v:v*k+prev*(1-k);out.push(prev)});return out}
+function rsi(values,p=14){let out=Array(values.length).fill(null);if(values.length<=p)return out;let gain=0,loss=0;for(let i=1;i<=p;i++){let d=values[i]-values[i-1];gain+=Math.max(d,0);loss+=Math.max(-d,0)}let ag=gain/p,al=loss/p;out[p]=al===0?100:100-100/(1+ag/al);for(let i=p+1;i<values.length;i++){let d=values[i]-values[i-1];ag=(ag*(p-1)+Math.max(d,0))/p;al=(al*(p-1)+Math.max(-d,0))/p;out[i]=al===0?100:100-100/(1+ag/al)}return out}
+function atr(data,p=14){let tr=data.map((v,i)=>{if(i===0)return (v.high&&v.low)?v.high-v.low:0;let prev=data[i-1].close;return (v.high&&v.low)?Math.max(v.high-v.low,Math.abs(v.high-prev),Math.abs(v.low-prev)):Math.abs(v.close-prev)});let out=Array(data.length).fill(null);if(data.length<=p)return out;let a=tr.slice(1,p+1).reduce((x,y)=>x+y,0)/p;out[p]=a;for(let i=p+1;i<data.length;i++){a=(a*(p-1)+tr[i])/p;out[i]=a}return out}
+function calc(data){let c=data.map(x=>x.close),e12=ema(c,12),e26=ema(c,26),m=e12.map((v,i)=>v-e26[i]),s=ema(m,9),h=m.map((v,i)=>v-s[i]);return {c,e20:ema(c,20),e50:ema(c,50),m,s,h,r:rsi(c),atr:atr(data)}}
+function demoData(){let a=[],v=145,now=Date.now();for(let i=0;i<150;i++){let drift=i<50?-.12:i<105?.28:-.04;v+=drift+(Math.sin(i*.7)*.75)+(Math.random()-.48)*2.2;a.push({date:new Date(now-(149-i)*86400000).toISOString().slice(0,10),open:+(v-.3).toFixed(2),high:+(v+1.1).toFixed(2),low:+(v-1.0).toFixed(2),close:+v.toFixed(2)})}return a}
+function svgPath(vals,x,y){return vals.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ')}
+function drawPrice(d){let svg=$('priceChart'),W=900,H=260,p={l:48,r:12,t:15,b:24},n=d.c.length,x=i=>p.l+i*(W-p.l-p.r)/(n-1),all=[...d.c,...d.e20,...d.e50],min=Math.min(...all),max=Math.max(...all),y=v=>H-p.b-(v-min)/(max-min||1)*(H-p.t-p.b);let grid='';for(let k=0;k<5;k++){let yy=p.t+k*(H-p.t-p.b)/4,val=max-k*(max-min)/4;grid+=`<line class="gridline" x1="${p.l}" y1="${yy}" x2="${W-p.r}" y2="${yy}"/><text x="3" y="${yy+3}">${val.toFixed(1)}</text>`}svg.innerHTML=grid+`<path d="${svgPath(d.c,x,y)}" fill="none" stroke="#79a9ff" stroke-width="2.2"/><path d="${svgPath(d.e20,x,y)}" fill="none" stroke="#f3bd5b" stroke-width="1.7"/><path d="${svgPath(d.e50,x,y)}" fill="none" stroke="#35d39a" stroke-width="1.7"/><text x="${p.l}" y="${H-4}">${rows[0].date}</text><text x="${W-70}" y="${H-4}">${rows[n-1].date}</text>`}
+function drawMacd(d){let svg=$('macdChart'),W=900,H=190,p={l:48,r:12,t:12,b:22},n=d.m.length,x=i=>p.l+i*(W-p.l-p.r)/(n-1),vals=[...d.m,...d.s,...d.h],max=Math.max(...vals.map(Math.abs))||1,y=v=>H/2-v/max*(H/2-p.t-p.b),zero=H/2,step=(W-p.l-p.r)/n;let grid=`<line class="zero" x1="${p.l}" y1="${zero}" x2="${W-p.r}" y2="${zero}"/>`;d.h.forEach((v,i)=>{let yy=y(v),top=Math.min(yy,zero),hh=Math.max(1,Math.abs(zero-yy));grid+=`<rect x="${x(i)-step*.35}" y="${top}" width="${step*.7}" height="${hh}" fill="${v>=0?'#35d39a':'#ff6b7a'}" opacity=".65"/>`});svg.innerHTML=grid+`<path d="${svgPath(d.m,x,y)}" fill="none" stroke="#79a9ff" stroke-width="2.1"/><path d="${svgPath(d.s,x,y)}" fill="none" stroke="#f3bd5b" stroke-width="1.8"/><text x="3" y="15">${max.toFixed(2)}</text><text x="3" y="${H-5}">-${max.toFixed(2)}</text>`}
+function render(data,symbol,live){rows=data;let d=calc(data),i=data.length-1,prev=i-1,fmt=v=>v==null?'—':v.toFixed(2),cross=d.m[prev]<=d.s[prev]&&d.m[i]>d.s[i],down=d.m[prev]>=d.s[prev]&&d.m[i]<d.s[i],bull=d.m[i]>d.s[i]&&d.m[i]>0,bear=d.m[i]<d.s[i]&&d.m[i]<0,trend=d.e20[i]>d.e50[i],rv=d.r[i];$('heading').textContent=symbol;$('company').textContent=(live?'LIVE DATA':'SIMULERAD DATA')+' · '+(symbol.endsWith('.ST')?'STOCKHOLM':'MARKNAD');$('lastPrice').textContent=fmt(d.c[i]);let change=(d.c[i]/d.c[0]-1)*100;$('priceChange').textContent=(change>=0?'+':'')+change.toFixed(2)+' % under perioden';$('priceChange').className='small '+(change>=0?'green':'red');$('macdValue').textContent=fmt(d.m[i]);$('macdValue').className='value '+(bull?'green':bear?'red':'');$('macdSub').textContent='Histogram '+(d.h[i]>=0?'+':'')+fmt(d.h[i]);$('rsiValue').textContent=fmt(rv);$('rsiValue').className='value '+(rv>70?'red':rv<30?'green':'');$('rsiSub').textContent=rv>70?'Överköpt zon':rv<30?'Översåld zon':'Neutralt momentum';$('ema20Value').textContent=fmt(d.e20[i]);$('ema50Value').textContent=fmt(d.e50[i]);drawPrice(d);drawMacd(d);
+let score=(bull?1:bear?-1:0)+(trend?1:-1)+(rv>50?1:rv<50?-1:0),title,c,cls,desc;if(cross){title='Möjlig positiv MACD-korsning';c='KÖPSIGNAL';cls='';}else if(down){title='Möjlig negativ MACD-korsning';c='SÄLJSIGNAL';cls='down';}else if(score>=2){title='Positiv teknisk bild';c='BULLISH';cls='';}else if(score<=-2){title='Negativ teknisk bild';c='BEARISH';cls='down';}else{title='Blandad / avvaktande bild';c='NEUTRAL';cls='neutral';}
+$('signalText').textContent=title;$('signalPill').textContent=c;$('signalPill').className='pill '+cls;
+let parts=[];parts.push(cross?'MACD har korsat upp genom signallinjen, vilket kan vara en tidig positiv momentumindikation.':down?'MACD har korsat ned genom signallinjen, vilket kan signalera avtagande momentum.':bull?'MACD ligger över signallinjen och över noll, vilket stödjer positivt momentum.':bear?'MACD ligger under signallinjen och under noll, vilket stödjer negativt momentum.':'MACD ger ingen tydlig riktningssignal just nu.');parts.push(trend?'EMA 20 ligger över EMA 50 (positivt trendfilter).':'EMA 20 ligger under eller lika med EMA 50 (svagare trendfilter).');parts.push(rv>70?'RSI är över 70: var uppmärksam på överköpta nivåer.':rv<30?'RSI är under 30: var uppmärksam på översålda nivåer.':'RSI visar varken en tydligt överköpt eller översåld nivå.');$('analysisText').textContent=parts.join(' ');updateRisk(data,d);$('dataStatus').textContent=live?'Live · Twelve Data':'Demoläge · simulerade värden'}
+
+function updateRisk(data,d){
+ let i=data.length-1,price=d.c[i],a=d.atr[i]||Math.max(price*.015,.01),stop=Math.max(.01,price-2*a),risk=price-stop,target=price+2*risk,capital=Math.max(0,Number($('capital')?.value||100000)),currency=$('capitalCurrency')?.value||'SEK',riskCash=capital*.01,shares=risk>0?Math.floor(riskCash/risk):0,affordable=Math.floor(capital/price);shares=Math.max(0,Math.min(shares,affordable));
+ const f=v=>Number.isFinite(v)?v.toFixed(2):'—';
+ $('atrValue').textContent=f(a);$('stopValue').textContent=f(stop);$('targetValue').textContent=f(target);$('sharesValue').textContent=shares.toLocaleString('sv-SE');
+ $('riskExplain').textContent=`Modellvärden från senaste stängning ${f(price)}. Riskbudget 1 % = ${riskCash.toLocaleString('sv-SE',{maximumFractionDigits:0})} ${currency}. Beräknad positionsstorlek ${shares} aktier, cirka ${(shares*price).toLocaleString('sv-SE',{maximumFractionDigits:0})} ${currency}. Stop-loss är en planeringsnivå, inte en garanterad exitkurs.`;
+}
+$('capital').addEventListener('input',()=>{if(rows.length){let d=calc(rows);updateRisk(rows,d)}});$('capitalCurrency').addEventListener('change',()=>{if(rows.length){let d=calc(rows);updateRisk(rows,d)}});
+function runBacktest(data){
+ const d=calc(data),cost=.001;let cash=1,equity=1,peak=1,maxDD=0,pos=null,trades=[],curve=[];
+ for(let i=60;i<data.length-1;i++){
+   let bar=data[i],next=data[i+1],r=d.r[i],up=d.m[i]>d.s[i],crossUp=d.m[i-1]<=d.s[i-1]&&up,crossDown=d.m[i-1]>=d.s[i-1]&&d.m[i]<d.s[i],histImproving=d.h[i]>d.h[i-1]&&d.h[i-1]>d.h[i-2],trend=d.e20[i]>d.e50[i],above=d.c[i]>d.e20[i];
+   if(!pos){
+     let entrySignal=(crossUp||(up&&d.m[i]>0&&histImproving))&&trend&&above&&r>=45&&r<=68;
+     if(entrySignal){let entry=next.open||next.close,a=d.atr[i]||entry*.015,stop=entry-2*a,target=entry+4*a;if(stop>0){let units=Math.min(cash/entry,(cash*.01)/(2*a));pos={entry,stop,target,units,entryIndex:i+1};cash-=units*entry*(1+cost)}}
+   }else{
+     let exitPrice=null,reason='';
+     if((next.low||next.close)<=pos.stop){exitPrice=pos.stop;reason='stop-loss'}
+     else if((next.high||next.close)>=pos.target){exitPrice=pos.target;reason='2R-mål'}
+     else if(crossDown||d.c[i]<d.e20[i]){exitPrice=next.open||next.close;reason='trend/MACD-exit'}
+     if(exitPrice!==null){let proceeds=pos.units*exitPrice*(1-cost),pnl=proceeds-pos.units*pos.entry*(1+cost);cash+=proceeds;trades.push({pnl,ret:exitPrice/pos.entry-1,reason});pos=null}
+   }
+   equity=cash;
+   if(pos)equity+=pos.units*(data[i+1].close||pos.entry);
+   peak=Math.max(peak,equity);maxDD=Math.max(maxDD,(peak-equity)/peak);curve.push(equity);
+ }
+ if(pos){let last=data[data.length-1].close,proceeds=pos.units*last*(1-cost);cash+=proceeds;trades.push({pnl:proceeds-pos.units*pos.entry*(1+cost),ret:last/pos.entry-1,reason:'periodslut'});pos=null}
+ let ret=(cash-1)*100,hold=(data[data.length-1].close/data[0].close-1)*100,wins=trades.filter(t=>t.pnl>0).length,win=trades.length?wins/trades.length*100:0;
+ return {ret,hold,dd:maxDD*100,win,trades:trades.length,wins,cash};
+}
+async function backtest(){
+ let symbol=$('symbol').value.trim().toUpperCase();
+ $('backtestBtn').disabled=true;$('backtestBtn').textContent='Hämtar historik…';$('btDetails').textContent='Hämtar upp till 1 250 dagliga datapunkter…';
+ try{
+  const url=`/api/time_series?symbol=${encodeURIComponent(symbol)}&interval=1day&outputsize=1250`;
+  const res=await fetch(url),j=await res.json();if(!res.ok||j.status==='error'||!j.values)throw Error(j.message||'Kunde inte hämta historik.');
+  const data=j.values.slice().reverse().map(v=>({date:v.datetime,open:Number(v.open),high:Number(v.high),low:Number(v.low),close:Number(v.close)})).filter(v=>Number.isFinite(v.close)&&Number.isFinite(v.high)&&Number.isFinite(v.low));
+  if(data.length<150)throw Error('För få datapunkter för ett meningsfullt test (minst 150 krävs).');
+  const b=runBacktest(data),fmt=v=>(v>=0?'+':'')+v.toFixed(1)+'%';
+  $('btReturn').textContent=fmt(b.ret);$('btReturn').className='value '+(b.ret>=0?'green':'red');$('btHold').textContent=fmt(b.hold);$('btDrawdown').textContent='-'+b.dd.toFixed(1)+'%';$('btWin').textContent=b.win.toFixed(0)+'%';$('btTrades').textContent=String(b.trades);
+  $('btDetails').textContent=`${symbol}: ${data[0].date} till ${data[data.length-1].date} (${data.length} handelsdagar). ${b.wins} av ${b.trades} affärer var lönsamma. Strategin återinvesterar kapitalet och tar högst en position åt gången. Kostnadsantagande: 0,1 % per sida.`;
+ }catch(e){$('btDetails').textContent='Backtestfel: '+e.message+' Kontrollera API-kvot, symbol och historiktillgång.'}
+ finally{$('backtestBtn').disabled=false;$('backtestBtn').textContent='Kör backtest 5 år'}
+}
+$('backtestBtn').addEventListener('click',backtest);
+
+async function analyze(){let symbol=$('symbol').value.trim().toUpperCase(),interval=$('interval').value;$('error').textContent='';if(!symbol){$('error').textContent='Ange en aktiesymbol.';return}
+$('analyze').disabled=true;$('analyze').textContent='Hämtar data…';try{let url=`/api/time_series?symbol=${encodeURIComponent(symbol)}&interval=${interval}&outputsize=200`;let res=await fetch(url),j=await res.json();if(!res.ok||j.status==='error'||!j.values)throw Error(j.message||'Kunde inte hämta kursdata. Kontrollera symbol, API-nyckel och abonnemang.');let data=j.values.slice().reverse().map(v=>({date:v.datetime,open:Number(v.open),high:Number(v.high),low:Number(v.low),close:Number(v.close)})).filter(v=>Number.isFinite(v.close));if(data.length<60)throw Error('För få datapunkter. Minst 60 behövs för en rimligare EMA 50-analys.');render(data,symbol,true)}catch(e){$('error').textContent='API-fel: '+e.message+'\\nDu kan kontrollera symbolformatet och försöka igen, eller visa demoläget.'}finally{$('analyze').disabled=false;$('analyze').textContent='Analysera aktie'}}
+
+// Förvald universumlista: 25 svenska och 75 amerikanska stora/etablerade bolag.
+// Tickerformatet kan variera mellan dataleverantörer och konton.
+const universe = [
+['Investor B','INVE-B.ST','Sverige'],['Volvo B','VOLV-B.ST','Sverige'],['Atlas Copco B','ATCO-B.ST','Sverige'],['Assa Abloy B','ASSA-B.ST','Sverige'],['AstraZeneca','AZN.ST','Sverige'],
+['Sandvik','SAND.ST','Sverige'],['Epiroc B','EPI-B.ST','Sverige'],['ABB','ABB.ST','Sverige'],['Essity B','ESSITY-B.ST','Sverige'],['Axfood','AXFO.ST','Sverige'],
+['SCA B','SCA-B.ST','Sverige'],['Holmen B','HOLM-B.ST','Sverige'],['Skanska B','SKA-B.ST','Sverige'],['Telia','TELIA.ST','Sverige'],['Tele2 B','TEL2-B.ST','Sverige'],
+['Handelsbanken A','SHB-A.ST','Sverige'],['SEB A','SEB-A.ST','Sverige'],['Swedbank A','SWED-A.ST','Sverige'],['Nordea','NDA-SE.ST','Sverige'],['Alfa Laval','ALFA.ST','Sverige'],
+['SKF B','SKF-B.ST','Sverige'],['Trelleborg B','TREL-B.ST','Sverige'],['Getinge B','GETI-B.ST','Sverige'],['Lifco B','LIFCO-B.ST','Sverige'],['Addtech B','ADDT-B.ST','Sverige'],
+['Procter & Gamble','PG','USA'],['Coca-Cola','KO','USA'],['PepsiCo','PEP','USA'],['Walmart','WMT','USA'],['Costco','COST','USA'],
+['McDonald’s','MCD','USA'],['Colgate-Palmolive','CL','USA'],['Kimberly-Clark','KMB','USA'],['General Mills','GIS','USA'],['Kroger','KR','USA'],
+['Johnson & Johnson','JNJ','USA'],['AbbVie','ABBV','USA'],['Merck','MRK','USA'],['Abbott Laboratories','ABT','USA'],['Amgen','AMGN','USA'],
+['Gilead Sciences','GILD','USA'],['Bristol Myers Squibb','BMY','USA'],['Medtronic','MDT','USA'],['Thermo Fisher','TMO','USA'],['UnitedHealth','UNH','USA'],
+['Waste Management','WM','USA'],['Republic Services','RSG','USA'],['NextEra Energy','NEE','USA'],['Duke Energy','DUK','USA'],['Southern Company','SO','USA'],
+['American Electric Power','AEP','USA'],['Consolidated Edison','ED','USA'],['Xcel Energy','XEL','USA'],['Verizon','VZ','USA'],['AT&T','T','USA'],
+['T-Mobile US','TMUS','USA'],['Automatic Data Processing','ADP','USA'],['Paychex','PAYX','USA'],['CME Group','CME','USA'],['Intercontinental Exchange','ICE','USA'],
+['Berkshire Hathaway B','BRK.B','USA'],['JPMorgan Chase','JPM','USA'],['Bank of America','BAC','USA'],['U.S. Bancorp','USB','USA'],['PNC Financial','PNC','USA'],
+['3M','MMM','USA'],['Honeywell','HON','USA'],['Emerson Electric','EMR','USA'],['Eaton','ETN','USA'],['Caterpillar','CAT','USA'],
+['Deere & Company','DE','USA'],['Union Pacific','UNP','USA'],['CSX','CSX','USA'],['UPS','UPS','USA'],['FedEx','FDX','USA'],
+['Lowe’s','LOW','USA'],['Home Depot','HD','USA'],['Target','TGT','USA'],['Clorox','CLX','USA'],
+['Elevance Health','ELV','USA'],['Cigna Group','CI','USA'],['CVS Health','CVS','USA'],['Danaher','DHR','USA'],['Stryker','SYK','USA'],
+['Boston Scientific','BSX','USA'],['Regeneron','REGN','USA'],['Eli Lilly','LLY','USA'],['Air Products','APD','USA'],['Ecolab','ECL','USA'],
+['Sherwin-Williams','SHW','USA'],['Illinois Tool Works','ITW','USA'],['Parker Hannifin','PH','USA'],['Roper Technologies','ROP','USA'],['Norfolk Southern','NSC','USA'],
+['Old Dominion Freight Line','ODFL','USA'],['Marsh & McLennan','MMC','USA'],['Aon','AON','USA'],['Chubb','CB','USA'],['Progressive','PGR','USA'],['Carrier Global','CARR','USA']
+];
+// Dubbletter tas bort så att listan alltid består av unika symboler.
+const stocks = [...new Map(universe.map(x=>[x[1],x])).values()].slice(0,100);
+let scanRows=[];
+function scoreStock(data){
+ const d=calc(data),i=data.length-1,p=i-1, r=d.r[i], macdUp=d.m[i]>d.s[i], crossUp=d.m[p]<=d.s[p]&&macdUp, crossDown=d.m[p]>=d.s[p]&&d.m[i]<d.s[i], trend=d.e20[i]>d.e50[i], above=d.c[i]>d.e20[i], histUp=d.h[i]>d.h[p];
+ let rets=[];for(let k=Math.max(1,i-60);k<=i;k++)rets.push(d.c[k]/d.c[k-1]-1);let mean=rets.reduce((a,b)=>a+b,0)/(rets.length||1),sd=Math.sqrt(rets.reduce((a,b)=>a+(b-mean)**2,0)/(rets.length||1)),factor=$('interval').value==='1week'?52:$('interval').value==='1month'?12:252,volatility=sd*Math.sqrt(factor)*100;
+ let score=0; if(macdUp)score+=25;if(d.m[i]>0)score+=10;if(crossUp)score+=15;if(trend)score+=20;if(above)score+=10;if(histUp)score+=10;if(r>=45&&r<=68)score+=10;else if(r>68&&r<=75)score+=4;else if(r<35)score-=5;if(volatility<20)score+=5;else if(volatility>45)score-=15;score=Math.max(0,Math.min(100,score));
+ let confirmed=(crossUp||(macdUp&&histUp&&d.m[i]>0))&&trend&&above&&r>=45&&r<=68&&volatility<=35;
+ let rating=score>=75&&confirmed?'buy':score>=52?'watch':'wait';
+ return {price:d.c[i],macd:d.m[i],rsi:r,trend,score,rating,crossUp,crossDown,above,confirmed,volatility};
+}
+function renderScan(){
+ const filter=$('resultFilter').value,filtered=scanRows.filter(x=>filter==='all'||x.rating===filter).sort((a,b)=>b.score-a.score);
+ $('scanResults').innerHTML=filtered.length?filtered.map(x=>`<tr><td class="ticker">${x.name}<div class="small">${x.symbol}</div></td><td>${x.market}</td><td>${Number.isFinite(x.price)?x.price.toFixed(2):'—'}</td><td class="${x.macd>=0?'green':'red'}">${Number.isFinite(x.macd)?x.macd.toFixed(3):'—'}</td><td>${Number.isFinite(x.rsi)?x.rsi.toFixed(1):'—'}</td><td>${Number.isFinite(x.volatility)?x.volatility.toFixed(1)+'%':'—'}</td><td class="${x.trend?'green':'red'}">${x.trend?'Positiv':'Svag'}</td><td><span class="tag ${x.rating}">${x.rating==='buy'?'KÖP-KANDIDAT':x.rating==='watch'?'BEVAKA':'AVVAKTA'}</span></td><td><b>${x.score}/100</b></td></tr>`).join(''):`<tr><td colspan="9" class="small">Inga resultat i den här kategorin ännu.</td></tr>`;
+ $('buyCount').textContent=scanRows.filter(x=>x.rating==='buy').length;$('watchCount').textContent=scanRows.filter(x=>x.rating==='watch').length;$('scannedCount').textContent=scanRows.length+' / '+stocks.length;
+}
+async function scanUniverse(demo=false){
+ 
+ $('error').textContent='';$('scanBtn').disabled=true;$('demoScanBtn').disabled=true;$('scanState').textContent=demo?'DEMO':'Analyserar';$('scanProgress').style.width='0%';scanRows=[];renderScan();
+ if(demo){
+   stocks.forEach((s,i)=>{let seed=i+5,prices=[];let val=70+seed*1.4;for(let j=0;j<110;j++){val+=Math.sin((j+seed)*.32)*.45+(Math.cos(j*.13+seed)*.16)+(j>65?.035:-.005);prices.push({date:'Demo',close:val})}let m=scoreStock(prices);scanRows.push({name:s[0],symbol:s[1],market:s[2],...m})});
+   renderScan();$('scanProgress').style.width='100%';$('scanProgressText').textContent='100 av 100 bolag visas med simulerade data – inte verkliga signaler.';$('scanState').textContent='Demodata';$('scanBtn').disabled=false;$('demoScanBtn').disabled=false;return;
+ }
+ let done=0,errors=0;const interval=$('interval').value;
+ // Begränsad samtidighet för att inte skicka 100 anrop på en gång.
+ for(let start=0;start<stocks.length;start+=3){
+   const batch=stocks.slice(start,start+3);
+   const settled=await Promise.all(batch.map(async s=>{
+     try{const url=`/api/time_series?symbol=${encodeURIComponent(s[1])}&interval=${interval}&outputsize=120`;const res=await fetch(url);const j=await res.json();if(!res.ok||j.status==='error'||!j.values)throw Error(j.message||'Ingen data');const data=j.values.slice().reverse().map(v=>({date:v.datetime,close:Number(v.close)})).filter(v=>Number.isFinite(v.close));if(data.length<60)throw Error('För få datapunkter');return {name:s[0],symbol:s[1],market:s[2],...scoreStock(data)}}
+     catch(e){errors++;return {name:s[0],symbol:s[1],market:s[2],price:NaN,macd:NaN,rsi:NaN,trend:false,score:0,rating:'wait',error:e.message}}
+   }));
+   scanRows.push(...settled);done+=batch.length;$('scanProgress').style.width=(done/stocks.length*100)+'%';$('scanProgressText').textContent=`Bearbetat ${done} av ${stocks.length} bolag · ${errors} utan data`;renderScan();
+ }
+ $('scanState').textContent='Klart';$('scanProgressText').textContent=`Klart: ${scanRows.length-errors} analyserade, ${errors} saknade data. Kontrollera felaktiga symboler och API-kvot.`;$('scanBtn').disabled=false;$('demoScanBtn').disabled=false;
+}
+$('scanBtn').addEventListener('click',()=>scanUniverse(false));
+$('demoScanBtn').addEventListener('click',()=>scanUniverse(true));
+$('resultFilter').addEventListener('change',renderScan);
+
+$('analyze').addEventListener('click',analyze);$('demo').addEventListener('click',()=>{let s=$('symbol').value.trim().toUpperCase()||'DEMO';$('error').textContent='';render(demoData(),s,false);$('error').textContent='Demodata är simulerad och ska inte användas som beslutsunderlag.'});
+$('market').addEventListener('change',e=>{if(e.target.value==='US'&&$('symbol').value==='VOLV-B.ST')$('symbol').value='AAPL';if(e.target.value==='SE'&&$('symbol').value==='AAPL')$('symbol').value='VOLV-B.ST'});
+render(demoData(),'VOLV-B.ST',false);
+</script></body></html>
